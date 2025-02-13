@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="SQL for Data Science.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="644"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="NhanVien" custom_title="0" dock_id="2" table="4,8:mainNhanVien"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000002fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500320100000000ffffffff0000011e00ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">-- Cau 1.Tạo một bảng có tên NhanVien 
+CREATE TABLE NhanVien (
+	MaNV INT PRIMARY KEY,
+	HoTen VARCHAR(50),
+	Tuoi INT,
+	PhongBan VARCHAR(50)
+	);
+-- Cau 2.Chèn các bản ghi sau vào bảng trên:
+INSERT INTO NhanVien (MaNV, HoTen, Tuoi, PhongBan) VALUES
+	(1, 'Nguyen Van A', 30, 'Ke Toan'),
+	(2, 'Tran Thi B', 25, 'Nhan Su'),
+	(3, 'Le Van C', 28, 'IT'),
+	(4, 'Pham Thi D', 32, 'Ke Toan'),
+	(5, 'Vu Van E', 26, 'IT'),
+	(6, 'Nguyen Thi F', 29, 'Marketing'),
+	(7, 'Le Thi G', 27, 'Nhan Su'),
+	(8, 'Hoang Van H', 35, 'Ke Toan'),
+	(9, 'Pham Van I', 33, 'Marketing'),
+	(10, 'Tran Van J', 24, 'IT'),
+	(11, 'Dang Thi K', 31, 'Nhan Su'),
+	(12, 'Nguyen Van L', 28, 'Ke Toan'),
+	(13, 'Tran Thi M', 26, 'Marketing'),
+	(14, 'Pham Van N', 30, 'Nhan Su'),
+	(15, 'Hoang Thi O', 27, 'IT');
+
+-- Cau 3: Lấy toàn bộ thông tin của nhân viên trong bảng NhanVien
+SELECT * FROM NhanVien;
+
+-- Cau 4: Truy vấn HoTen và Tuoi của các nhân viên trong phòng IT
+SELECT HoTen , Tuoi FROM NhanVien WHERE PhongBan = 'IT';
+
+-- Cau 5: Tìm nhân viên có độ tuổi lớn hơn 25
+SELECT * FROM NhanVien WHERE Tuoi &gt; 25 ;
+
+-- Cau 6:  Cho biết nhân viên lớn tuổi nhất của các PhongBan
+SELECT PhongBan ,max(Tuoi) as TuoiLonNhat
+FROM NhanVien
+Group By PhongBan;
+
+-- Cau 7: Chuyển đổi thông tin PhongBan của nhân viên “Le Van C” sang “Marketing” (có vấn đề gặp phải khi thực 
+--hiện chuyển đổi thông tin hay không? Nếu có, vấn đề đó là gì và hãy đề xuất biện pháp giải quyết) 
+UPDATE NhanVien SET PhongBan = 'Marketing' WHERE HoTen = 'Le Van C';
+
+-- Cau 8: Xóa nhân viên có “MaNV = 2” rồi cho biết mỗi phòng ban có bao nhiêu người.
+DELETE FROM NhanVien WHERE MaNV = '2';
+SELECT PhongBan , count(*) as SoLuongNhanVien 
+FROM NhanVien
+GROUP By PhongBan;
+SELECT * FROM NhanVien;</sql><current_tab id="0"/></tab_sql></sqlb_project>
