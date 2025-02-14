@@ -81,7 +81,7 @@ elif len(results) == 1:
     conn.commit()
     print(" Đã cập nhật PhongBan của 'Le Van C' thành 'Marketing'.")
 else:
-    print("⚠ Có nhiều nhân viên tên 'Le Van C', vui lòng chọn MaNV cụ thể:")
+    print(" Có nhiều nhân viên tên 'Le Van C', vui lòng chọn MaNV cụ thể:")
     for row in results:
         print(row)  # Hiển thị (MaNV, HoTen, PhongBan)
     
