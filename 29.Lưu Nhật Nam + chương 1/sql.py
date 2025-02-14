@@ -58,18 +58,42 @@ cursor.execute('''
 for row in cursor.fetchall():
     print(row)
 ##7
-print("câu 7 :")
-cursor.execute("SELECT * FROM NhanVien WHERE HoTen = 'Le Van C'")
+print("câu 7:")
+# Vấn đề có thể gặp phải:
+    # Có nhiều nhân viên trùng tên "Le Van C" → Nếu có nhiều người tên này, tất cả sẽ bị cập nhật.
+    # Nhân viên "Le Van C" không tồn tại → Lệnh UPDATE không có tác dụng.
+# Giải pháp:
+    # Dùng hàm if else để phân loại
+        # Cách hoạt động
+            # Kiểm tra xem có nhân viên nào tên "Le Van C" không.
+            # Nếu không có, thông báo lỗi.
+            # Nếu chỉ có 1 người, cập nhật luôn.
+            # Nếu có nhiều người trùng tên, yêu cầu nhập MaNV để cập nhật chính xác.
+            # In kết quả sau khi cập nhật để kiểm tra.
+
+cursor.execute("SELECT MaNV, HoTen, PhongBan FROM NhanVien WHERE HoTen = 'Le Van C'")
 results = cursor.fetchall()
 
-if len(results) == 1:
+if len(results) == 0:
+    print("Không tìm thấy nhân viên 'Le Van C'!")
+elif len(results) == 1:
     cursor.execute("UPDATE NhanVien SET PhongBan = 'Marketing' WHERE HoTen = 'Le Van C'")
     conn.commit()
-    print("Cập nhật thành công!")
-elif len(results) > 1:
-    print("Có nhiều nhân viên tên 'Le Van C', vui lòng chọn MaNV chính xác!")
+    print(" Đã cập nhật PhongBan của 'Le Van C' thành 'Marketing'.")
 else:
-    print("Không tìm thấy nhân viên 'Le Van C'!")
+    print("⚠ Có nhiều nhân viên tên 'Le Van C', vui lòng chọn MaNV cụ thể:")
+    for row in results:
+        print(row)  # Hiển thị (MaNV, HoTen, PhongBan)
+    
+    ma_nv = input("Nhập MaNV để cập nhật: ")
+    
+    cursor.execute("UPDATE NhanVien SET PhongBan = 'Marketing' WHERE MaNV = ?", (ma_nv,))
+    conn.commit()
+    print(f" Đã cập nhật PhongBan của MaNV = {ma_nv} thành 'Marketing'.")
+
+cursor.execute("SELECT * FROM NhanVien WHERE HoTen = 'Le Van C'")
+print(" Kết quả sau cập nhật:", cursor.fetchall())
+
 
 
 ##8
