@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="F:/SQL cho KHDL/chuong_1/nhanvien.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="1002"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainNhanVien"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="NhanVien" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="71"/><column index="2" value="132"/><column index="3" value="61"/><column index="4" value="115"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">--bài 1 
+DROP TABLE IF EXISTS NhanVien;
+
+CREATE TABLE NhanVien (
+    MaNV INT PRIMARY KEY,
+    HoTen VARCHAR(50),
+    Tuoi INT,
+    PhongBan VARCHAR(50)
+);
+
+-- Bài 2 Chèn dữ liệu vào bảng NhanVien
+INSERT INTO NhanVien (MaNV, HoTen, Tuoi, PhongBan) VALUES
+(1, 'Nguyen Van A', 30, 'Ke Toan'),
+(2, 'Tran Thi B', 25, 'Nhan Su'),
+(3, 'Le Van C', 28, 'IT'),
+(4, 'Pham Thi D', 32, 'Ke Toan'),
+(5, 'Vu Van E', 26, 'IT'),
+(6, 'Nguyen Thi F', 29, 'Marketing'),
+(7, 'Le Thi G', 27, 'Nhan Su'),
+(8, 'Hoang Van H', 35, 'Ke Toan'),
+(9, 'Pham Van I', 33, 'Marketing'),
+(10, 'Tran Van J', 24, 'IT'),
+(11, 'Dang Thi K', 31, 'Nhan Su'),
+(12, 'Nguyen Van L', 28, 'Ke Toan'),
+(13, 'Tran Thi M', 26, 'Marketing'),
+(14, 'Pham Van N', 30, 'Nhan Su'),
+(15, 'Hoang Thi O', 27, 'IT');
+
+-- Bài 3 Lấy toàn bộ thông tin của nhân viên trong bảng NhanVien
+SELECT * FROM NhanVien;
+
+-- Bài 4 Truy vấn HoTen và Tuoi của các nhân viên trong phòng IT
+SELECT HoTen, Tuoi FROM NhanVien WHERE PhongBan = 'IT';
+
+-- Bài 5. Tìm nhân viên có độ tuổi lớn hơn 25
+SELECT * FROM NhanVien WHERE Tuoi &gt; 25;
+
+-- Bài 6 Cho biết nhân viên lớn tuổi nhất của các PhongBan
+SELECT PhongBan, HoTen, Tuoi
+FROM NhanVien
+WHERE Tuoi = (SELECT MAX(Tuoi) FROM NhanVien AS nv2 WHERE nv2.PhongBan = NhanVien.PhongBan);
+
+-- Bài 7. Chuyển đổi thông tin PhongBan của nhân viên “Le Van C” sang “Marketing”
+UPDATE NhanVien SET PhongBan = 'Marketing' WHERE HoTen = 'Le Van C';
+-- Trả lời câu 7
+--Vấn đề khi thực hiện UPDATE (Câu 7)
+--Nếu có ràng buộc khóa ngoại (Foreign Key) liên kết đến phòng ban cũ, việc cập nhật có thể bị lỗi.
+--Nếu các báo cáo hoặc dữ liệu liên quan đến phòng ban cũ chưa cập nhật kịp thời, có thể gây sai lệch trong hệ thống.
+--Giải pháp: Cập nhật dữ liệu một cách an toàn bằng cách kiểm tra ràng buộc trước khi thay đổi.
+
+-- bài 8 . Xóa nhân viên có MaNV = 2 rồi cho biết mỗi phòng ban có bao nhiêu người
+DELETE FROM NhanVien WHERE MaNV = 2;
+SELECT PhongBan, COUNT(*) AS SoLuong FROM NhanVien GROUP BY PhongBan;
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
