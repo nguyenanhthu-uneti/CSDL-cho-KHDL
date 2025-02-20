@@ -71,20 +71,20 @@ for tuois in tuoi :
 
 #6. NNhân viên lớn tuổi nhất của các PhongBan : 
 cursor.execute('''
-    SELECT PhongBan, HoTen, Tuoi 
-    FROM NhanVien
-    WHERE (PhongBan, Tuoi) IN (
-        SELECT PhongBan, MAX(Tuoi) 
+    SELECT PhongBan, HoTen, Tuoi
+    FROM NhanVien n
+    WHERE Tuoi = (
+        SELECT MAX(Tuoi) 
         FROM NhanVien 
-        GROUP BY PhongBan
+        WHERE PhongBan = n.PhongBan
     )
 ''')
 
-PB= cursor.fetchall()
+PB = cursor.fetchall()
+
 print("\nNhân viên lớn tuổi nhất của các phòng ban:")
 for pb in PB:
     print(f"- Phòng ban: {pb[0]}, Nhân viên: {pb[1]}, Tuổi: {pb[2]}")
-
 #7.Chuyển đổi thông tin PhongBan của nhân viên “Le Van C” sang “Marketing” 
 # (có vấn đề gặp phải khi thực hiện chuyển đổi thông tin hay không? Nếu có, vấn đề đó là gì và hãy đề xuất biện pháp giải quyết).
 cursor.execute("UPDATE NhanVien SET PhongBan = 'Marketing' WHERE MaNV = 3")
@@ -121,8 +121,6 @@ cursor.execute("SELECT PhongBan, COUNT(*) FROM NhanVien GROUP BY PhongBan")
 for dem in cursor.fetchall():
     print(dem)
 
-# Đóng kết nối :
-conn.close()
 
 
 #9. Trình bày các bước kết nối đến SQLite trong Python và thực thi các câu lệnh trên bằng Python:
