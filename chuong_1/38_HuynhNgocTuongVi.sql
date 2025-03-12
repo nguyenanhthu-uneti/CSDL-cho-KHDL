@@ -45,7 +45,6 @@ WHERE Tuoi IN (
     FROM NhanVien
     GROUP BY PhongBan
 );
-
 #7.Chuyển đổi thông tin PhongBan của nhân viên Le Van C từ IT sang Marketing
 SELECT * FROM NhanVien WHERE HoTen = 'Le Van C';
 UPDATE NhanVien
