@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="34_LETHILINHPHUONG.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1116"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="car_scores" custom_title="0" dock_id="1" table="4,10:maincar_scores"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011300ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">--CÂU 1:
+SELECT 
+    (
+        COUNT(*) * SUM(A * B) - SUM(A) * SUM(B)
+    ) / 
+    (
+        SQRT(COUNT(*) * SUM(A * A) - POWER(SUM(A), 2)) * 
+        SQRT(COUNT(*) * SUM(B * B) - POWER(SUM(B), 2))
+    ) AS correlation
+FROM my_table;
+
+--CÂU 2:
+-- Chuyển dữ liệu sang dạng quan hệ 
+CREATE TABLE car_scores (
+    Day VARCHAR(10),
+    Car VARCHAR(1),
+    Score FLOAT
+);
+
+INSERT INTO car_scores (Day, Car, Score) VALUES
+('Day 1', 'A', 8),
+('Day 1', 'B', 9),
+('Day 1', 'C', 7),
+('Day 2', 'A', 7.5),
+('Day 2', 'B', 8.5),
+('Day 2', 'C', 7),
+('Day 3', 'A', 6),
+('Day 3', 'B', 7),
+('Day 3', 'C', 8),
+('Day 4', 'A', 7),
+('Day 4', 'B', 6),
+('Day 4', 'C', 5);
+
+SELECT * FROM car_scores
+
+-- Thực hiện kiểm định
+SELECT 
+    Day,
+    Car,
+    Score,
+    CASE 
+        WHEN Score &lt;= 6 THEN 'Low'
+        WHEN Score &lt;= 8 THEN 'Medium'
+        ELSE 'High'
+    END AS Category
+FROM car_scores;
+
+--Bảng tần suất của Car và Category 
+SELECT 
+    Car,
+    Category,
+    COUNT(*) AS Frequency
+FROM (
+    SELECT 
+        Car,
+        CASE 
+            WHEN Score &lt;= 6 THEN 'Low'
+            WHEN Score &lt;= 8 THEN 'Medium'
+            ELSE 'High'
+        END AS Category
+    FROM car_scores
+) AS sub
+GROUP BY Car, Category
+ORDER BY Car, Category;
+
+-- Bảng tần suất của Day và Category 
+SELECT 
+    Day,
+    CASE 
+        WHEN Score &lt;= 6 THEN 'Low'
+        WHEN Score &lt;= 8 THEN 'Medium'
+        ELSE 'High'
+    END AS Category,
+    COUNT(*) AS Frequency
+FROM car_scores
+GROUP BY Day, Category
+ORDER BY Day, Category;
+
+--CÂU 3:
+CREATE TABLE flights (
+    id INT PRIMARY KEY,
+    departure_time INT
+);
+
+INSERT INTO flights (id, departure_time) VALUES
+(1, 830),
+(2, 1445),
+(3, 30),
+(4, 0),
+(5, 2359);
+
+SELECT * FROM flights
+
+ALTER TABLE flights ADD COLUMN departure_time_converted TEXT;
+
+UPDATE flights
+SET departure_time_converted = 
+  SUBSTR('0000' || departure_time, -4, 2) || ':' || SUBSTR('0000' || departure_time, -2, 2);
+
+SELECT * FROM flights;
+
+-- CÂU 4:
+CREATE TABLE sales (
+    id INTEGER PRIMARY KEY,
+    sale_amount INTEGER
+);
+
+INSERT INTO sales (id, sale_amount) VALUES
+(1, 100),
+(2, 110),
+(3, 95),
+(4, 105),
+(5, 120),
+(6, 300),  
+(7, 98),
+(8, 102);
+
+SELECT * FROM sales
+
+-- Tính Median 
+SELECT AVG(sale_amount) AS median
+FROM (
+  SELECT sale_amount
+  FROM sales
+  ORDER BY sale_amount
+  LIMIT 2 - (SELECT COUNT(*) FROM sales) % 2
+  OFFSET (SELECT (COUNT(*) - 1) / 2 FROM sales)
+);
+
+-- Tính MAD
+SELECT AVG(abs_diff) AS mad
+FROM (
+  SELECT ABS(sale_amount - 103.5) AS abs_diff
+  FROM sales
+  ORDER BY abs_diff
+  LIMIT 2 - (SELECT COUNT(*) FROM sales) % 2
+  OFFSET (SELECT (COUNT(*) - 1) / 2 FROM sales)
+);
+
+-- Tìm ngoại lệ
+SELECT *
+FROM sales
+WHERE ABS(sale_amount - 103.5) &gt; 9.0;
+
+--CÂU 5:
+CREATE TABLE Patient (
+    id INTEGER PRIMARY KEY,
+    last_name TEXT,
+    weight INTEGER,
+    height INTEGER
+);
+
+INSERT INTO Patient (id, last_name, weight, height) VALUES
+(1, 'Nguyen', 60, 165),
+(2, 'Nguyen', 61, 165),
+(3, 'Tran', 55, 160),
+(4, 'Nguyen', 72, 170),
+(5, 'Tran', 55, 159),
+(6, 'Le', 65, 168);
+
+SELECT * FROM Patient
+
+--Boolean
+SELECT 
+    p1.id AS id1, p2.id AS id2,
+    p1.last_name AS name1, p2.last_name AS name2,
+    p1.weight AS weight1, p2.weight AS weight2,
+    
+    -- Tính điểm Boolean
+    (CASE WHEN p1.last_name = p2.last_name THEN 1 ELSE 0 END) +
+    (CASE WHEN ABS(p1.weight - p2.weight) &lt;= 2 THEN 1 ELSE 0 END) AS match_score
+    
+FROM Patient p1
+JOIN Patient p2 ON p1.id &lt; p2.id
+WHERE
+    -- Tổng điểm Boolean từ 2 trở lên → là cùng người
+    ((p1.last_name = p2.last_name) AND (ABS(p1.weight - p2.weight) &lt;= 2));
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
